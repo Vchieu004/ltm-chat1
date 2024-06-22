@@ -1,79 +1,135 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-package component;
+package com.raven.component;
 
-import com.sun.tools.javac.Main;
-import net.miginfocom.swing.MigLayout;
-import java.awt.Color;
-import java.awt.Image;
+import com.raven.app.MessageType;
+import com.raven.emoji.Emogi;
+import com.raven.emoji.Model_Emoji;
+import com.raven.event.PublicEvent;
+import com.raven.main.Main;
+import com.raven.model.Model_Send_Message;
+import com.raven.model.Model_User_Account;
+import com.raven.service.Service;
+import com.raven.swing.ScrollBar;
+import com.raven.swing.WrapLayout;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JScrollBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import swing.WrapLayout;
-
+import javax.swing.border.EmptyBorder;
+import net.miginfocom.swing.MigLayout;
 
 public class Panel_More extends javax.swing.JPanel {
 
-  
+    public Model_User_Account getUser() {
+        return user;
+    }
+
+    public void setUser(Model_User_Account user) {
+        this.user = user;
+    }
+
+    private Model_User_Account user;
+
     public Panel_More() {
         initComponents();
         init();
     }
-    
-    private void init(){
+
+    private void init() {
         setLayout(new MigLayout("fillx"));
-        panelHeader=new JPanel();
+        panelHeader = new JPanel();
         panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.LINE_AXIS));
         panelHeader.add(getButtonFile());
         panelHeader.add(getEmojiStyle1());
         panelHeader.add(getEmojiStyle2());
-        add(panelHeader,"w 100%, h 30!, wrap");
-        panelDetail=new JPanel();
-        panelDetail.setLayout(new WrapLayout(WrapLayout.LEFT));
+        add(panelHeader, "w 100%, h 30!, wrap");
+        panelDetail = new JPanel();
+        panelDetail.setLayout(new WrapLayout(WrapLayout.LEFT));    //  use warp layout
         JScrollPane ch = new JScrollPane(panelDetail);
         ch.setBorder(null);
         ch.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        ch.setVerticalScrollBar(new JScrollBar());
-        panelDetail.setBackground(Color.yellow);
-        add(ch,"w 100%, h 100%");
-        
+        ch.setVerticalScrollBar(new ScrollBar());
+        //  test color
+        add(ch, "w 100%, h 100%");
     }
-    
-    private JButton getButtonFile(){
+
+    private JButton getButtonFile() {
         OptionButton cmd = new OptionButton();
-        cmd.setIcon(new ImageIcon(getClass().getResource("/icon/link.png")));
-        cmd.addActionListener(new ActionListener(){
-           @Override
-           public void actionPerformed(ActionEvent ae){
-               JFileChooser ch = new JFileChooser();
-               ch.showOpenDialog(Panel_More.this);
-           }
+        cmd.setIcon(new ImageIcon(getClass().getResource("/com/raven/icon/link.png")));
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                JFileChooser ch = new JFileChooser();
+                ch.showOpenDialog(Main.getFrames()[0]);
+                //  Update next
+            }
         });
         return cmd;
     }
-    
-    private JButton getEmojiStyle1(){
+
+    private JButton getEmojiStyle1() {
         OptionButton cmd = new OptionButton();
-        cmd.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/emoji/icon/1.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
-        
+        cmd.setIcon(Emogi.getInstance().getImoji(1).toSize(25, 25).getIcon());
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                clearSelected();
+                cmd.setSelected(true);
+                panelDetail.removeAll();
+                for (Model_Emoji d : Emogi.getInstance().getStyle1()) {
+                    panelDetail.add(getButton(d));
+                }
+                panelDetail.repaint();
+                panelDetail.revalidate();
+            }
+        });
         return cmd;
     }
-    
-    private JButton getEmojiStyle2(){
+
+    private JButton getEmojiStyle2() {
         OptionButton cmd = new OptionButton();
-        cmd.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/emoji/icon/8.png")).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
-        
+        cmd.setIcon(Emogi.getInstance().getImoji(21).toSize(25, 25).getIcon());
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                clearSelected();
+                cmd.setSelected(true);
+                panelDetail.removeAll();
+                for (Model_Emoji d : Emogi.getInstance().getStyle2()) {
+                    panelDetail.add(getButton(d));
+                }
+                panelDetail.repaint();
+                panelDetail.revalidate();
+            }
+        });
         return cmd;
     }
-    
+
+    private JButton getButton(Model_Emoji data) {
+        JButton cmd = new JButton(data.getIcon());
+        cmd.setName(data.getId() + "");
+        cmd.setBorder(new EmptyBorder(3, 3, 3, 3));
+        cmd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        cmd.setContentAreaFilled(false);
+        cmd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "");
+                sendMessage(message);
+                PublicEvent.getInstance().getEventChat().sendMessage(message);
+            }
+        });
+        return cmd;
+    }
+
+    private void sendMessage(Model_Send_Message data) {
+        Service.getInstance().getClient().emit("send_to_user", data.toJsonObject());
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -83,14 +139,21 @@ public class Panel_More extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 442, Short.MAX_VALUE)
+            .addGap(0, 515, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 61, Short.MAX_VALUE)
+            .addGap(0, 84, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    
+
+    private void clearSelected() {
+        for (Component c : panelHeader.getComponents()) {
+            if (c instanceof OptionButton) {
+                ((OptionButton) c).setSelected(false);
+            }
+        }
+    }
     private JPanel panelHeader;
     private JPanel panelDetail;
 
