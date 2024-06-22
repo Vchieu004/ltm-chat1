@@ -1,69 +1,62 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package model;
+package com.raven.model;
 
+import com.raven.app.MessageType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- *
- * @author ADMIN
- */
 public class Model_Receive_Message {
 
-    /**
-     * @return the fromId
-     */
-    public int getFromId() {
-        return fromId;
+    public MessageType getMessageType() {
+        return messageType;
     }
 
-    /**
-     * @param fromId the fromId to set
-     */
-    public void setFromId(int fromId) {
-        this.fromId = fromId;
+    public void setMessageType(MessageType messageType) {
+        this.messageType = messageType;
     }
 
-    /**
-     * @return the text
-     */
+    public int getFromUserID() {
+        return fromUserID;
+    }
+
+    public void setFromUserID(int fromUserID) {
+        this.fromUserID = fromUserID;
+    }
+
     public String getText() {
         return text;
     }
 
-    /**
-     * @param text the text to set
-     */
     public void setText(String text) {
         this.text = text;
     }
 
-    public Model_Receive_Message(int fromId, String text) {
-        this.fromId = fromId;
+    public Model_Receive_Message(MessageType messageType, int fromUserID, String text) {
+        this.messageType = messageType;
+        this.fromUserID = fromUserID;
         this.text = text;
     }
-    
+
     public Model_Receive_Message(Object json) {
         JSONObject obj = (JSONObject) json;
         try {
-            fromId = obj.getInt("fromId");
+            messageType = MessageType.toMessageType(obj.getInt("messageType"));
+            fromUserID = obj.getInt("fromUserID");
             text = obj.getString("text");
         } catch (JSONException e) {
             System.err.println(e);
         }
     }
-    
-    private int fromId;
+
+    private MessageType messageType;
+    private int fromUserID;
     private String text;
-    
+
     public JSONObject toJsonObject() {
         try {
             JSONObject json = new JSONObject();
-            json.put("fromId", getFromId());
-            json.put("text", getText());
+            json.put("messageType", messageType.getValue());
+            json.put("fromUserID", fromUserID);
+            json.put("text", text);
             return json;
         } catch (JSONException e) {
             return null;
