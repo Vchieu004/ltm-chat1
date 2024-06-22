@@ -1,111 +1,111 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-package component;
+package com.raven.component;
 
+import com.raven.app.MessageType;
+import com.raven.emoji.Emogi;
+import com.raven.model.Model_Receive_Message;
+import com.raven.model.Model_Send_Message;
+import com.raven.swing.ScrollBar;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import javax.swing.Icon;
 import javax.swing.JScrollBar;
-import model.Model_Receive_Message;
-import model.Model_Send_Message;
 import net.miginfocom.swing.MigLayout;
-import swing.ScrollBar;
 
-/**
- *
- * @author ADMIN
- */
-public class ChatBody extends javax.swing.JPanel {
+public class Chat_Body extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ChatBody
-     */
-    public ChatBody() {
+    public Chat_Body() {
         initComponents();
         init();
-
-
     }
 
     private void init() {
-        body.setLayout(new MigLayout("fillx", "", "2[]2"));
+        body.setLayout(new MigLayout("fillx", "", "5[bottom]5"));
         sp.setVerticalScrollBar(new ScrollBar());
         sp.getVerticalScrollBar().setBackground(Color.WHITE);
     }
 
     public void addItemLeft(Model_Receive_Message data) {
-        ChatLeft item = new ChatLeft();
-        item.setText(data.getText());
-        item.setTime();
-        body.add(item, "wrap, w 100::80%");
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_Left item = new Chat_Left();
+            item.setText(data.getText());
+            item.setTime();
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_Left item = new Chat_Left();
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            item.setTime();
+            body.add(item, "wrap, w 100::80%");
+        }
         repaint();
         revalidate();
     }
 
     public void addItemLeft(String text, String user, String[] image) {
-        ChatLeft_Profile item = new ChatLeft_Profile();
+        Chat_Left_With_Profile item = new Chat_Left_With_Profile();
         item.setText(text);
         item.setImage(image);
         item.setTime();
         item.setUserProfile(user);
         body.add(item, "wrap, w 100::80%");
+        //  ::80% set max with 80%
         body.repaint();
         body.revalidate();
-    }
-
-    public void addItemRight(Model_Send_Message data) {
-        ChatRight item = new ChatRight();
-        item.setText(data.getText());
-        body.add(item, "wrap, al right, w 100::80%");
-        repaint();
-        revalidate();
-        item.setTime();
-        scrollToBottom();
-    }
-
-    public void addDate(String date) {
-        ChatDate item = new ChatDate();
-        item.setDate(date);
-        body.add(item, "wrap, al center");
-        body.repaint();
-        body.revalidate();
-    }
-    
-    public void clearChat(){
-        body.removeAll();
-        repaint();
-        revalidate();
     }
 
     public void addItemFile(String text, String user, String fileName, String fileSize) {
-        ChatLeft_Profile item = new ChatLeft_Profile();
+        Chat_Left_With_Profile item = new Chat_Left_With_Profile();
         item.setText(text);
         item.setFile(fileName, fileSize);
         item.setTime();
         item.setUserProfile(user);
         body.add(item, "wrap, w 100::80%");
+        //  ::80% set max with 80%
         body.repaint();
         body.revalidate();
+    }
+
+    public void addItemRight(Model_Send_Message data) {
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_Right item = new Chat_Right();
+            item.setText(data.getText());
+            body.add(item, "wrap, al right, w 100::80%");
+            item.setTime();
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_Right item = new Chat_Right();
+            item.setEmoji(Emogi.getInstance().getImoji(Integer.valueOf(data.getText())).getIcon());
+            body.add(item, "wrap, al right, w 100::80%");
+            item.setTime();
+        }
+        repaint();
+        revalidate();
+        scrollToBottom();
     }
 
     public void addItemFileRight(String text, String fileName, String fileSize) {
-        ChatRight item = new ChatRight();
+        Chat_Right item = new Chat_Right();
         item.setText(text);
         item.setFile(fileName, fileSize);
         body.add(item, "wrap, al right, w 100::80%");
+        //  ::80% set max with 80%
         body.repaint();
         body.revalidate();
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    public void addDate(String date) {
+        Chat_Date item = new Chat_Date();
+        item.setDate(date);
+        body.add(item, "wrap, al center");
+        body.repaint();
+        body.revalidate();
+    }
+
+    public void clearChat() {
+        body.removeAll();
+        repaint();
+        revalidate();
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -122,11 +122,11 @@ public class ChatBody extends javax.swing.JPanel {
         body.setLayout(bodyLayout);
         bodyLayout.setHorizontalGroup(
             bodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 500, Short.MAX_VALUE)
+            .addGap(0, 826, Short.MAX_VALUE)
         );
         bodyLayout.setVerticalGroup(
             bodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 555, Short.MAX_VALUE)
         );
 
         sp.setViewportView(body);
