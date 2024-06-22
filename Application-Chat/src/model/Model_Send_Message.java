@@ -1,82 +1,51 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package model;
+package com.raven.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-/**
- *
- * @author ADMIN
- */
 public class Model_Send_Message {
 
-    /**
-     * @return the fromId
-     */
-    public int getFromId() {
-        return fromId;
+    public int getMessageType() {
+        return messageType;
     }
 
-    /**
-     * @param fromId the fromId to set
-     */
-    public void setFromId(int fromId) {
-        this.fromId = fromId;
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
     }
 
-    /**
-     * @return the toId
-     */
-    public int getToId() {
-        return toId;
+    public int getFromUserID() {
+        return fromUserID;
     }
 
-    /**
-     * @param toId the toId to set
-     */
-    public void setToId(int toId) {
-        this.toId = toId;
+    public void setFromUserID(int fromUserID) {
+        this.fromUserID = fromUserID;
     }
 
-    /**
-     * @return the text
-     */
+    public int getToUserID() {
+        return toUserID;
+    }
+
+    public void setToUserID(int toUserID) {
+        this.toUserID = toUserID;
+    }
+
     public String getText() {
         return text;
     }
 
-    /**
-     * @param text the text to set
-     */
     public void setText(String text) {
         this.text = text;
     }
 
-    public Model_Send_Message(int fromId, int toId, String text) {
-        this.fromId = fromId;
-        this.toId = toId;
+    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text) {
+        this.messageType = messageType;
+        this.fromUserID = fromUserID;
+        this.toUserID = toUserID;
         this.text = text;
     }
 
     public Model_Send_Message() {
     }
-    
-    private int fromId;
-    private int toId;
+
+    private int messageType;
+    private int fromUserID;
+    private int toUserID;
     private String text;
-    
-    public JSONObject toJsonObject() {
-        try {
-            JSONObject json = new JSONObject();
-            json.put("fromId", fromId);
-            json.put("toId", toId);
-            json.put("text", text);
-            return json;
-        } catch (JSONException e) {
-            return null;
-        }
-    }
 }
